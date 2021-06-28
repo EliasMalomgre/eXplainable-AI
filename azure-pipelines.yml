@@ -1,0 +1,65 @@
+
+trigger:
+- feature/*
+- main
+
+jobs:
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+- job: Build_Python_XAI
+  pool:
+    vmImage: ubuntu-latest
+  strategy:
+    matrix:
+      Python38:
+        python.version: '3.8'
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+    displayName: 'Use Python $(python.version)'
+  - script: |
+      cd eXplainable-AI
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+    displayName: 'Install dependencies'
+  - script: |
+      cd eXplainable-AI
+      pip install pytest pytest-azurepipelines
+      pytest
+    displayName: 'pytest'
+# Node.js with Vue
+# Build a Node.js project that uses Vue.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+- job: Build_Vue_FrontEnd
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+  - script: |
+      cd frontend-vue
+      npm install
+      npm run build
+    displayName: 'npm install and build'
+- job: Build_Spring_Backend
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - task: Gradle@2
+    inputs:
+      workingDirectory: 'core-spring'
+      gradleWrapperFile: 'core-spring/gradlew'
+      gradleOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.11'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
+      testResultsFiles: '**/TEST-*.xml'
+      tasks: 'build'
+

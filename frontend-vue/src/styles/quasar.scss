@@ -1,0 +1,33 @@
+@import './quasar.variables.scss';
+@import '~quasar-styl';
+// @import '~quasar-addon-styl';
+
+Body {
+  font-family: 'Roboto', sans-serif;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+  margin: 1rem;
+}
+
+.header {
+  z-index: -1;
+  height: 80%;
+  //height: 55%;
+  width: 100%;
+  overflow: initial;
+  position: absolute;
+  background-image: linear-gradient($primary, rgba(255, 255, 255, 0) 85%);
+  //background-color: $primary; experimenting with non-gradient but blobby background
+  //border-bottom-right-radius: 50% 50%;
+  //border-bottom-left-radius: 50% 50%;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 1000px;
+}

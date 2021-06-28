@@ -1,0 +1,53 @@
+version: "3.0"
+
+services:
+  mongodb:
+        image : mongo
+        container_name: xai-mongo
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: XAI
+            MONGO_INITDB_ROOT_PASSWORD: InfoSupportXAI
+            MONGO_INITDB_DATABASE: XAI
+        volumes:
+            - ./mongodb/data:/data/db
+            - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+        ports:
+            - 27017:27017
+        restart: unless-stopped
+
+  xai-processing:
+    build:
+      context: ./eXplainable-AI
+    ports:
+      - 4080:4080
+    volumes: 
+      - ./eXplainable-AI/src:/app/src
+
+  java-backend:
+    build:
+      context: ./core-spring
+    ports:
+      - 7080:7080
+    depends_on: 
+      - mongodb
+      - xai-processing
+
+
+  build-frontend:
+    image: node:latest
+    volumes:
+      - ./frontend-vue:/usr/src/app
+    working_dir: /usr/src/app
+    command: npm install
+
+  run-frontend:
+    image: node:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./frontend-vue:/usr/src/app
+    working_dir: /usr/src/app
+    command: npm run serve-docker
+    depends_on:
+      - build-frontend
+      - java-backend
