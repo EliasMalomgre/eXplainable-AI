@@ -37,8 +37,8 @@ class AzureStorageService:
             # Create a temp file and write the bytes int the temp file
             tmp_file = os.path.join(tmp_dir, str(uuid.uuid4()))
             with open(tmp_file, "wb") as download_file:
-                blob_client: BlobClient = BlobClient.from_connection_string(self.properties.connection_string,
-                                                                            "xai-opdracht",
+                blob_client: BlobClient = BlobClient.from_connection_string(self.properties.azure_connection_string,
+                                                                            self.properties.azure_blob_container,
                                                                             file_path)
 
                 blob_data: StorageStreamDownloader = blob_client.download_blob()
